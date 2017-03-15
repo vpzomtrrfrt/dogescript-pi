@@ -1,0 +1,25 @@
+{
+  "name": "dogescript-pi",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpzomtrrfrt/dogescript-pi.git"
+  },
+  "author": "VpzomTrrfrt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vpzomtrrfrt/dogescript-pi/issues"
+  },
+  "homepage": "https://github.com/vpzomtrrfrt/dogescript-pi#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-dogescript": "^0.1.0",
+    "gulp-pegjs": "^0.1.0",
+    "tape": "^4.6.3"
+  }
+}
