@@ -28,7 +28,7 @@ statement = ws statement:(
 			if(ind > -1) { name = name.substring(0, ind); }
 			name = name.replace("-", "_");
 		}
-		return "var " + name + " = require('"+module+"');";
+		return "var " + name + "=require('"+module+"');";
 	}
 	/ "such" wsr name:varname wsr params:("much" wsr params:(pname:varname wsr { return pname; })* { return params.join(","); })? body:statements wow { return "function "+name+"("+(params||"")+"){"+body+"}" }
 	/ val:value { return val+";"; }
