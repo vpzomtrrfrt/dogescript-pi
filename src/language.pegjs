@@ -11,12 +11,10 @@ wow = "wow"
 
 statements = ws statements:statement* { return statements.join(""); }
 
-statement = ws statement:(
-	"rly" wsr condition:value wsr body:statements mods:ifmod* wow { return "if("+condition+"){"+body+"}"+(mods?mods.join(""):""); }
-	/ "many" wsr condition:value wsr body:statements wow { return "while("+condition+"){"+body+"}"; }
-	/ "very" wsr key:varname wsr "is" wsr value:value { return "var "+key+"\="+value+";"; }
-	/ "very" wsr key:varname { return "var "+key+";"; }
-	/ key:varname wsr "is" wsr value:value { return key+"\="+value+";"; }
+semicolonStatement = (
+	"very" wsr key:varname wsr ("is" / "as") wsr value:value { return "var "+key+"\="+value; }
+	/ "very" wsr key:varname { return "var "+key; }
+	/ key:varname wsr "is" wsr value:value { return key+"\="+value; }
 	/ "so" wsr module:[^\t\n ]+ varr:(wsr "as" wsr name:varname { return name; })? {
 		module = module.join("");
 		var name = varr;
@@ -28,10 +26,16 @@ statement = ws statement:(
 			if(ind > -1) { name = name.substring(0, ind); }
 			name = name.replace("-", "_");
 		}
-		return "var " + name + "=require('"+module+"');";
+		return "var " + name + "=require('"+module+"')";
 	}
+	/ val:value { return val; }
+)
+statement = ws statement:(
+	"rly" wsr condition:value wsr body:statements mods:ifmod* wow { return "if("+condition+"){"+body+"}"+(mods?mods.join(""):""); }
+	/ "many" wsr condition:value wsr body:statements wow { return "while("+condition+"){"+body+"}"; }
 	/ "such" wsr name:varname wsr params:("much" wsr params:(pname:varname wsr { return pname; })* { return params.join(","); })? body:statements wow { return "function "+name+"("+(params||"")+"){"+body+"}" }
-	/ val:value { return val+";"; }
+	/ "much" wsr a:semicolonStatement ws ("next" wsr)? b:value ws ("next" wsr)? c:semicolonStatement body:statements wow { return "for("+a+";"+b+";"+c+"){"+body+"}"; }
+	/ value:semicolonStatement { return value+";"; }
 ) ws { return statement; }
 
 ifmod = mod:(
@@ -71,9 +75,9 @@ valuemod = (
 	/ ws "." ws b:varname { return "."+b; }
 )
 
-varname = !"shh" !wow !"but" chars:[a-zA-Z_$Ð0-9]+ { return chars.join(""); }
+varname = !"shh" !wow !"next" !"but" chars:[a-zA-Z_$Ð0-9]+ { return chars.join(""); }
 
-number = head:[1-9] tail:[0-9]+ { return [head].concat(tail).reduce(function(a,b) { return a*10+b }); }
+number = head:[1-9] tail:[0-9]+ { return [head].concat(tail).reduce(function(a,b) { return parseInt(a)*10+parseInt(b) }); }
 
 string = "'" content:(
 	"\\" val:(
